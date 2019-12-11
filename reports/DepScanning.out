@@ -1,0 +1,168 @@
+Found project in /tmp/app/juice-shop
+Using python 3
+Installing dependencies...
+npm WARN deprecated joi@13.7.0: This version has been deprecated in accordance with the hapi support policy (hapi.im/support). Please upgrade to the latest version to get the best features, bug fixes, and security patches. If you are unable to upgrade at this time, paid support is available for older versions (hapi.im/commercial).
+npm WARN deprecated jsonwebtoken@0.1.0: Critical vulnerability fix in v5.0.0. See https://auth0.com/blog/2015/03/31/critical-vulnerabilities-in-json-web-token-libraries/
+npm WARN deprecated hoek@5.0.4: This version has been deprecated in accordance with the hapi support policy (hapi.im/support). Please upgrade to the latest version to get the best features, bug fixes, and security patches. If you are unable to upgrade at this time, paid support is available for older versions (hapi.im/commercial).
+npm WARN deprecated topo@3.0.3: This module has moved and is now available at @hapi/topo. Please update your dependencies as this version is no longer maintained an may contain bugs and security issues.
+npm WARN deprecated jws@0.2.6: Security update: Versions below 3.0.0 are deprecated.
+npm WARN deprecated hoek@6.1.3: This module has moved and is now available at @hapi/hoek. Please update your dependencies as this version is no longer maintained an may contain bugs and security issues.
+npm WARN deprecated left-pad@1.3.0: use String.prototype.padStart()
+
+> iltorb@1.3.10 install /tmp/app/juice-shop/node_modules/iltorb
+> detect-libc prebuild-install || node-gyp rebuild
+
+prebuild-install WARN install No prebuilt binaries found (target=11.15.0 runtime=node arch=x64 platform=linux)
+gyp ERR! configure error 
+gyp ERR! stack Error: Command failed: /usr/bin/python3 -c import sys; print "%s.%s.%s" % sys.version_info[:3];
+gyp ERR! stack   File "<string>", line 1
+gyp ERR! stack     import sys; print "%s.%s.%s" % sys.version_info[:3];
+gyp ERR! stack                                ^
+gyp ERR! stack SyntaxError: invalid syntax
+gyp ERR! stack 
+gyp ERR! stack     at ChildProcess.exithandler (child_process.js:299:12)
+gyp ERR! stack     at ChildProcess.emit (events.js:193:13)
+gyp ERR! stack     at maybeClose (internal/child_process.js:999:16)
+gyp ERR! stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:266:5)
+gyp ERR! System Linux 4.15.0-1048-aws
+gyp ERR! command "/usr/local/bin/node" "/usr/local/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js" "rebuild"
+gyp ERR! cwd /tmp/app/juice-shop/node_modules/iltorb
+gyp ERR! node -v v11.15.0
+gyp ERR! node-gyp -v v3.8.0
+gyp ERR! not ok 
+
+> libxmljs2@0.21.6 install /tmp/app/juice-shop/node_modules/libxmljs2
+> node-pre-gyp install --fallback-to-build --loglevel http
+
+node-pre-gyp WARN Using request for node-pre-gyp https download 
+node-pre-gyp http GET https://github.com/marudor/libxmljs2/releases/download/v0.21.6/node-v67-linux-x64-musl.tar.gz
+node-pre-gyp http 200 https://github.com/marudor/libxmljs2/releases/download/v0.21.6/node-v67-linux-x64-musl.tar.gz
+[libxmljs2] Success: "/tmp/app/juice-shop/node_modules/libxmljs2/build/Release/xmljs.node" is installed via remote
+
+> sqlite3@4.1.0 install /tmp/app/juice-shop/node_modules/sqlite3
+> node-pre-gyp install --fallback-to-build
+
+node-pre-gyp WARN Using request for node-pre-gyp https download 
+[sqlite3] Success: "/tmp/app/juice-shop/node_modules/sqlite3/lib/binding/node-v67-linux-x64/node_sqlite3.node" is installed via remote
+
+> core-js@2.6.9 postinstall /tmp/app/juice-shop/node_modules/core-js
+> node scripts/postinstall || echo "ignore"
+
+Thank you for using core-js ( https://github.com/zloirock/core-js ) for polyfilling JavaScript standard library!
+
+The project needs your help! Please consider supporting of core-js on Open Collective or Patreon: 
+> https://opencollective.com/core-js 
+> https://www.patreon.com/zloirock 
+
+Also, the author of core-js ( https://github.com/zloirock ) is looking for a good job -)
+
+npm WARN lifecycle juice-shop@9.0.1~postinstall: cannot run in wd juice-shop@9.0.1 cd frontend && npm install && cd .. && npm run build (wd=/tmp/app/juice-shop)
+npm notice created a lockfile as package-lock.json. You should commit this file.
+npm WARN acorn-jsx@5.0.2 requires a peer of acorn@^6.0.0 || ^7.0.0 but none is installed. You must install peer dependencies yourself.
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@1.2.9 (node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@1.2.9: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: iltorb@1.3.10 (node_modules/iltorb):
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: iltorb@1.3.10 install: `detect-libc prebuild-install || node-gyp rebuild`
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: Exit status 1
+
+added 1403 packages from 1693 contributors and audited 882389 packages in 45.117s
+found 11 vulnerabilities (2 low, 5 moderate, 3 high, 1 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details
++----------------------------------------------------------------------------------------+
+| Severity   | Tool       | Identifier                                                   |
++----------------------------------------------------------------------------------------+
+| High       | Retire.js  | CVE-2016-7103                                                |
+|                                                                                        |
+| XSS Vulnerability on closeText option in jquery-ui-dialog                              |
+| In juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/jquery-ui    |
+| 1.8.10.custom.min.js                                                                   |
++----------------------------------------------------------------------------------------+
+| High       | Retire.js  |                                                              |
+|                                                                                        |
+| Out-of-bounds Read in base64url                                                        |
+| In juice-shop/package.json                                                             |
++----------------------------------------------------------------------------------------+
+| High       | Retire.js  |                                                              |
+|                                                                                        |
+| jsonwebtoken_verification-bypass in jsonwebtoken                                       |
+| In juice-shop/package.json                                                             |
++----------------------------------------------------------------------------------------+
+| High       | Retire.js  |                                                              |
+|                                                                                        |
+| Vulnerability in jws                                                                   |
+| In juice-shop/package.json                                                             |
++----------------------------------------------------------------------------------------+
+| Medium     | Retire.js  | CVE-2011-4969                                                |
+|                                                                                        |
+| XSS with location.hash in jquery                                                       |
+| In juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/jquery-1.3.2.js |
++----------------------------------------------------------------------------------------+
+| Medium     | Retire.js  | CVE-2012-6708                                                |
+|                                                                                        |
+| Selector interpreted as HTML in jquery                                                 |
+| In juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/jquery-1.3.2.js |
++----------------------------------------------------------------------------------------+
+| Medium     | Retire.js  | CVE-2011-4969                                                |
+|                                                                                        |
+| XSS with location.hash in jquery                                                       |
+| In juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/jquery       |
+| 1.4.4.min.js                                                                           |
++----------------------------------------------------------------------------------------+
+| Medium     | Retire.js  | CVE-2012-6708                                                |
+|                                                                                        |
+| Selector interpreted as HTML in jquery                                                 |
+| In juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/jquery       |
+| 1.4.4.min.js                                                                           |
++----------------------------------------------------------------------------------------+
+| Medium     | Retire.js  | CVE-2015-9251                                                |
+|                                                                                        |
+| 3rd party CORS request may execute in jquery                                           |
+| In juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/jquery       |
+| 1.4.4.min.js                                                                           |
++----------------------------------------------------------------------------------------+
+| Medium     | Retire.js  | CVE-2010-5312                                                |
+|                                                                                        |
+| Title cross-site scripting vulnerability in jquery-ui-dialog                           |
+| In juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/jquery-ui    |
+| 1.8.10.custom.min.js                                                                   |
++----------------------------------------------------------------------------------------+
+| Medium     | Retire.js  |                                                              |
+|                                                                                        |
+| FIXED so script elements gets removed by default to prevent possible XSS issues in     |
+| default config implementations in tinyMCE                                              |
+| In juice-shop/juice-shop/node_modules/selenium                                         |
+| webdriver/lib/test/data/js/tinymce.min.js                                              |
++----------------------------------------------------------------------------------------+
+| Medium     | Retire.js  |                                                              |
+|                                                                                        |
+| Regex denial of service in moment                                                      |
+| In juice-shop/package.json                                                             |
++----------------------------------------------------------------------------------------+
+| Medium     | Retire.js  |                                                              |
+|                                                                                        |
+| Sanitization not applied recursively in sanitize-html                                  |
+| In juice-shop/package.json                                                             |
++----------------------------------------------------------------------------------------+
+| Low        | Retire.js  | CVE-2019-11358                                               |
+|                                                                                        |
+| jQuery before 3.4.0, as used in Drupal, Backdrop CMS, and other products, mishandles   |
+| jQuery.extend(true, {}, ...) because of Object.prototype pollution in jquery           |
+| In juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/jquery-1.3.2.js |
++----------------------------------------------------------------------------------------+
+| Low        | Retire.js  | CVE-2019-11358                                               |
+|                                                                                        |
+| jQuery before 3.4.0, as used in Drupal, Backdrop CMS, and other products, mishandles   |
+| jQuery.extend(true, {}, ...) because of Object.prototype pollution in jquery           |
+| In juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/jquery       |
+| 1.4.4.min.js                                                                           |
++----------------------------------------------------------------------------------------+
+| Low        | Retire.js  |                                                              |
+|                                                                                        |
+| Prototype pollution attack in lodash                                                   |
+| In juice-shop/package.json                                                             |
++----------------------------------------------------------------------------------------+
+| Low        | Retire.js  |                                                              |
+|                                                                                        |
+| Prototype pollution attack in lodash                                                   |
+| In juice-shop/package.json                                                             |
++----------------------------------------------------------------------------------------+

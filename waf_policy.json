@@ -1,0 +1,53 @@
+{
+  "policy": {
+    "name": "AppPolicy01",
+    "description": "ISC ENABLEMENT FOR DECLARATIVE AND WEBHOOKS",
+    "template": {
+      "name": "POLICY_TEMPLATE_RAPID_DEPLOYMENT"
+    },
+    "enforcementMode": "blocking",
+    "server-technologies": [
+      {
+        "serverTechnologyName": "MySQL"
+      },
+      {
+        "serverTechnologyName": "Unix/Linux"
+      }
+    ],
+    "blocking-settings": {
+      "violations": [
+        {
+          "name": "VIOL_FILETYPE",
+          "alarm": true,
+          "block": true,
+          "learn": true
+        }
+      ]
+    },
+    "signature-settings": {
+      "signatureStaging": false
+    },
+    "policy-builder": {
+      "learnOnlyFromNonBotTraffic": false
+    },
+    "webhooks": [
+      {
+        "body": "{\"@type\":\"MessageCard\",\"@context\":\"https:\/\/schema.org\/extensions\",\"summary\":\"USER: <USER> WAF POLICY APPLIED: BRANCH\/TAG: <BRANCH>\",\"themeColor\":\"0078D7\",\"title\":\"<USER>: WAF POLICY APPLIED\",\"sections\":[{\"activityTitle\":\"F5 A-WAF Activity\",\"activitySubtitle\":\"WAF POLICY APPLIED: BRANCH\/TAG: [<BRANCH>]\",\"activityImage\":\"https:\/\/avatars1.githubusercontent.com\/u\/8935905?s=200&v=4\",\"facts\":[{\"name\":\"Device Name:\",\"value\":\"{{device.hostname}}\"},{\"name\":\"Policy Name:\",\"value\":\"{{policy.name}}\"},{\"name\":\"Enforcement Mode:\",\"value\":\"{{policy.enforcementMode}}\"},{\"name\":\"Device Version:\",\"value\":\"{{device.version}}\"}]}]}",
+        "contentType": "application/json",
+        "triggerEvent": "apply-policy",
+        "url": "<connector>",
+        "name": "GitLab_webhook_apply"
+      },
+      {
+        "body": "{\"@type\":\"MessageCard\",\"@context\":\"https:\/\/schema.org\/extensions\",\"summary\":\"USER: <USER> WAF EVENT: BRANCH\/TAG: <BRANCH>\",\"themeColor\":\"0078D7\",\"title\":\"<USER>: WAF VIOLATION\",\"sections\":[{\"activityTitle\":\"F5 A-WAF Activity\",\"activitySubtitle\":\"WAF POLICY VIOLATION: BRANCH\/TAG: [<BRANCH>]\",\"activityImage\":\"https:\/\/avatars1.githubusercontent.com\/u\/8935905?s=200&v=4\",\"facts\":[{\"name\":\"Device Name:\",\"value\":\"{{device.hostname}}\"},{\"name\":\"Policy Name:\",\"value\":\"{{policy.name}}\"},{\"name\":\"Client IP:\",\"value\":\"{{request.clientIp}}\"},{\"name\":\"HTTP Method:\",\"value\":\"{{request.method}}\"},{\"name\":\"HTTP URL:\",\"value\":\"{{request.url}}\"},{\"name\":\"App Hostname:\",\"value\":\"{{request.host}}\"},{\"name\":\"Enforcement Action:\",\"value\":\"{{request.enforcementAction}}\"},{\"name\":\"Violation Rating:\",\"value\":\"{{request.rating}}\"},{\"name\":\"Event ID:\",\"value\":\"{{request.id}}\"}]}]}",
+        "contentType": "application/json",
+        "triggerEvent": "http-request-illegal",
+        "url": "<connector>",
+        "name": "GitLab_webhook_event"
+      }
+    ]
+  },
+  "modifications": [
+    
+  ]
+}

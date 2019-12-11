@@ -1,0 +1,229 @@
+#!/bin/bash
+
+check_blocked() {
+    if grep -q "Request Rejected" /tmp/resp.$1
+    then
+        echo "Request was rejected"
+        return 0
+    else
+        echo "Request was not rejected"
+        return 1
+    fi
+}
+
+check_pass() {
+    if grep -q "Request Rejected" /tmp/resp.$1
+    then
+        echo "Request was rejected"
+        touch /tmp/suggest_mod
+        return 0
+    else
+        echo "Request accepted"
+        return 0
+    fi
+}
+
+check_suggestions() {
+    if [ -f /tmp/suggest_mod ];
+    then
+        sleep 10
+        polid=$(curl -X POST --user admin:${DOCKERHUB_PASS} --insecure https://10.1.1.7/mgmt/tm/asm/tasks/export-suggestions -d '{ "policyReference": { "link": "https://localhost/mgmt/tm/asm/policies/orTNBtBqVsAAGRAn-0xl_g" }, "inline": true }' | jq -r '.id')
+        echo $polid
+        sleep 10
+        suggestion=$(curl -k --user admin:${DOCKERHUB_PASS} https://10.1.1.7/mgmt/tm/asm/tasks/export-suggestions/$polid | jq -r '.result.suggestions')
+        modification=$(echo $suggestion | sed 's/^.//' | sed 's/.$//')
+        echo $modification
+        echo 10.1.1.6 gitlab.lab >> /etc/hosts
+        git config --global user.email "isclab@f5.com"
+        git config --global user.name "isclab"
+        git config --global http.sslVerify false
+        git clone http://isclab:${DOCKERHUB_PASS}@gitlab.lab/isclab/simple_app.git
+        cd simple_app
+        git checkout dev_branch
+        cp waf_policy.json suggestions/new_waf_policy.json
+        new_policy=$(awk -v "a=$modification" '/modifications/{print; print a;next}1' waf_policy.json)
+        echo $new_policy > /tmp/new_waf_policy.json
+        jq . /tmp/new_waf_policy.json > suggestions/new_waf_policy.json
+        git add suggestions/*
+        git commit -a -m "add suggestions to the waf policy"
+        git push -f origin dev_branch
+        echo "Trusted traffic failed. Check /suggestions in Git repo"
+        return 1
+    else
+        echo "Trusted traffic passed successfully"
+        return 0
+    fi
+}
+
+function upload_file_to_bigip() {
+    export size=`stat -c %s $1`
+    export size_minus=`expr $size - 1`
+    export range="0-${size_minus}/${size}"
+    echo $range
+    curl -vv -i -X POST -H "Content-Range: $range" --data-binary "@$1" --user admin:${DOCKERHUB_PASS} --insecure  https://10.1.1.7/mgmt/tm/asm/file-transfer/uploads/policy.json
+}
+
+waf_to_staging() {
+    sed -i "s/<BRANCH>/${CI_COMMIT_REF_NAME}/g" waf_policy.json
+    sed -i "s/<USER>/${USER}/g" waf_policy.json
+    connector0="https://outlook.office.com/webhook/20ce5bf4-7b14-4080-9f84-15692f0d6448@dd3dfd2f-6a3b-40d1-9be0-bf8327d81c50/IncomingWebhook/a7495f95d44045938e206f9423b3a798/223089a9-ccde-4d35-8a48-415503fe00dc"
+    connector1="https://outlook.office.com/webhook/eb5dc0c8-04d9-4624-b831-bf4ffa66025f@dd3dfd2f-6a3b-40d1-9be0-bf8327d81c50/IncomingWebhook/216eb090924d462f8fba39650c3cd1a3/223089a9-ccde-4d35-8a48-415503fe00dc"
+    connector2="https://outlook.office.com/webhook/eb5dc0c8-04d9-4624-b831-bf4ffa66025f@dd3dfd2f-6a3b-40d1-9be0-bf8327d81c50/IncomingWebhook/b355a59d52724a6082997e610a4e4c8a/223089a9-ccde-4d35-8a48-415503fe00dc"
+    connector3="https://outlook.office.com/webhook/eb5dc0c8-04d9-4624-b831-bf4ffa66025f@dd3dfd2f-6a3b-40d1-9be0-bf8327d81c50/IncomingWebhook/a715b8e6c584467d9e07b2e80af40982/223089a9-ccde-4d35-8a48-415503fe00dc"
+    connector4="https://outlook.office.com/webhook/eb5dc0c8-04d9-4624-b831-bf4ffa66025f@dd3dfd2f-6a3b-40d1-9be0-bf8327d81c50/IncomingWebhook/eda6b399747a43fab9d8a63e16814b8d/223089a9-ccde-4d35-8a48-415503fe00dc"
+    case ${ROOM} in
+      1)
+      sed -i "s#<connector>#${connector1}#g" waf_policy.json
+      ;;
+      2)
+      sed -i "s#<connector>#${connector2}#g" waf_policy.json
+      ;;
+      3)
+      sed -i "s#<connector>#${connector3}#g" waf_policy.json
+      ;;
+      4)
+      sed -i "s#<connector>#${connector4}#g" waf_policy.json
+      ;;
+      0)
+      sed -i "s#<connector>#${connector0}#g" waf_policy.json
+      ;;
+    esac
+    echo "Upload Policy to BIG-IP"
+    upload_file_to_bigip waf_policy.json
+    echo "Import Policy to BIG-IP"
+    curl -k -X POST https://10.1.1.7/mgmt/tm/asm/tasks/import-policy/ --user admin:${DOCKERHUB_PASS} -d'{"filename":"policy.json","policy":{"fullPath":"/Common/AppPolicy01"}}'
+    echo "Apply Policy"
+    curl -k -X POST https://10.1.1.7/mgmt/tm/asm/tasks/apply-policy/ --user admin:${DOCKERHUB_PASS} -d'{"policy":{"fullPath":"/Common/AppPolicy01"}}'
+}
+
+waf_to_prod() {
+    sed -i "s/<BRANCH>/${CI_COMMIT_REF_NAME}/g" waf_policy.json
+    sed -i "s/<USER>/${USER}/g" waf_policy.json
+    connector0="https://outlook.office.com/webhook/20ce5bf4-7b14-4080-9f84-15692f0d6448@dd3dfd2f-6a3b-40d1-9be0-bf8327d81c50/IncomingWebhook/a7495f95d44045938e206f9423b3a798/223089a9-ccde-4d35-8a48-415503fe00dc"
+    connector1="https://outlook.office.com/webhook/eb5dc0c8-04d9-4624-b831-bf4ffa66025f@dd3dfd2f-6a3b-40d1-9be0-bf8327d81c50/IncomingWebhook/216eb090924d462f8fba39650c3cd1a3/223089a9-ccde-4d35-8a48-415503fe00dc"
+    connector2="https://outlook.office.com/webhook/eb5dc0c8-04d9-4624-b831-bf4ffa66025f@dd3dfd2f-6a3b-40d1-9be0-bf8327d81c50/IncomingWebhook/b355a59d52724a6082997e610a4e4c8a/223089a9-ccde-4d35-8a48-415503fe00dc"
+    connector3="https://outlook.office.com/webhook/eb5dc0c8-04d9-4624-b831-bf4ffa66025f@dd3dfd2f-6a3b-40d1-9be0-bf8327d81c50/IncomingWebhook/a715b8e6c584467d9e07b2e80af40982/223089a9-ccde-4d35-8a48-415503fe00dc"
+    connector4="https://outlook.office.com/webhook/eb5dc0c8-04d9-4624-b831-bf4ffa66025f@dd3dfd2f-6a3b-40d1-9be0-bf8327d81c50/IncomingWebhook/eda6b399747a43fab9d8a63e16814b8d/223089a9-ccde-4d35-8a48-415503fe00dc"
+    case ${ROOM} in
+      1)
+      sed -i "s#<connector>#${connector1}#g" waf_policy.json
+      ;;
+      2)
+      sed -i "s#<connector>#${connector2}#g" waf_policy.json
+      ;;
+      3)
+      sed -i "s#<connector>#${connector3}#g" waf_policy.json
+      ;;
+      4)
+      sed -i "s#<connector>#${connector4}#g" waf_policy.json
+      ;;
+      0)
+      sed -i "s#<connector>#${connector0}#g" waf_policy.json
+      ;;
+    esac
+    echo "Upload Policy to BIG-IP"
+    upload_file_to_bigip waf_policy.json
+    echo "Import Policy to BIG-IP"
+    curl -k -X POST https://10.1.1.7/mgmt/tm/asm/tasks/import-policy/ --user admin:${DOCKERHUB_PASS} -d'{"filename":"policy.json","policy":{"fullPath":"/Common/AppPolicy01"}}'
+    echo "Apply Policy"
+    curl -k -X POST https://10.1.1.7/mgmt/tm/asm/tasks/apply-policy/ --user admin:${DOCKERHUB_PASS} -d'{"policy":{"fullPath":"/Common/AppPolicy01"}}'
+    echo "Attach Policy to PROD Virtual Server"
+    sed -i "s/staging/production/g" ConfigMapWaf.yaml
+    sed -i "s/10.1.10.101/10.1.10.102/g" ConfigMapWaf.yaml
+    sed -i "s/kube_pool/kube_pool_prod/g" ConfigMapWaf.yaml
+    sed -i "s/f5-as3-declaration/f5-as3-prod/g" ConfigMapWaf.yaml
+    sed -i "s/juiceshop/juiceshopprod/g" ConfigMapWaf.yaml
+}
+
+trusted_traffic() {
+    vs_name=serviceMain
+    echo VS Name $vs_name
+    vs_ip=`curl -k -u admin:$DOCKERHUB_PASS https://10.1.1.7/mgmt/tm/ltm/virtual/~staging~juiceshop~$vs_name |jq .destination |cut -d'%' -f 1 |cut -d'/' -f 3 |cut -d':' -f 1`
+    echo VS IP $vs_ip
+    sleep 5
+    curl -o /tmp/resp.json -k "http://$vs_ip/ftp/Packages.json"
+    curl -o /tmp/resp.yml -k "http://$vs_ip/ftp/errors.yml"
+    curl -o /tmp/resp.bak -k "http://$vs_ip/ftp/security_report.json.bak"
+}
+
+vulnerability_scan() {
+    vs_name=serviceMain
+    echo VS Name $vs_name
+    vs_ip=`curl -k -u admin:$DOCKERHUB_PASS https://10.1.1.7/mgmt/tm/ltm/virtual/~staging~juiceshop~$vs_name |jq .destination |cut -d'%' -f 1 |cut -d'/' -f 3 |cut -d':' -f 1`
+    echo VS IP $vs_ip
+    sleep 5
+    curl -o /tmp/resp.xss -k "http://$vs_ip/api/Products/1" -H "Content-Type:application/json" --data-binary '{"description":"<script>alert(\"XSS3\")</script>"}'
+    curl -o /tmp/resp.ftp -k "http://$vs_ip/ftp/package.json.bak%2500.md"
+    curl -o /tmp/resp.login -k "http://$vs_ip/index.php?username=1'%20or%20'1'%20=%20'1&password=1'%20or%20'1'%20=%20'1"
+    curl -o /tmp/resp.pw -k "http://$vs_ip/rest/user/change-password?current=abcde&new=slurmCl4ssic&repeat=slurmCl4ssic"
+}
+
+deploy_staging() {
+    kubectl version
+    kubectl apply -f ConfigMapJSstaging.yaml
+    kubectl apply -f service.yaml || true
+    sed -i "s/<TAG>/${TAG}/g" deployment.yaml
+    sed -i "s/<REPO_URL>/${REPOSITORY_URL}/g" deployment.yaml
+    kubectl apply -f deployment.yaml
+    kubectl apply -f ConfigMap.yaml
+    kubectl get all,ing -l app=${CI_BUILD_REF_SLUG}
+}
+
+deploy_prod() {
+    kubectl version
+    sed -i "s/staging/production/g" service.yaml
+    sed -i "s/kube_pool/kube_pool_prod/g" service.yaml
+    sed -i "s/juiceshop/juiceshopprod/g" service.yaml
+    kubectl apply -f ConfigMapJSprod.yaml
+    kubectl apply -f service.yaml || true
+    sed -i "s/<TAG>/${TAG}/g" deployment.yaml
+    sed -i "s/<REPO_URL>/${REPOSITORY_URL}/g" deployment.yaml
+    sed -i "s/staging/production/g" deployment.yaml
+    sed -i "s/juiceshop/juiceshopprod/g" deployment.yaml
+    kubectl apply -f deployment.yaml
+    sed -i "s/10.1.10.101/10.1.10.102/g" ConfigMap.yaml
+    sed -i "s/staging/production/g" ConfigMap.yaml
+    sed -i "s/kube_pool/kube_pool_prod/g" ConfigMap.yaml
+    sed -i "s/f5-as3-declaration/f5-as3-prod/g" ConfigMap.yaml
+    sed -i "s/juiceshop/juiceshopprod/g" ConfigMap.yaml
+    kubectl apply -f ConfigMap.yaml
+    kubectl get all,ing -l app=${CI_BUILD_REF_SLUG}
+}
+
+cleanup_staging() {
+    kubectl apply -f ConfigMapDelete.yaml
+    kubectl delete service juiceshop -n staging
+    kubectl delete deployment juiceshop -n staging
+    kubectl delete configmap f5-as3-declaration -n staging
+    kubectl delete configmap juiceshop-config -n staging
+}
+
+function dast() {
+  vs_name=serviceMain
+  echo VS Name $vs_name
+  vs_ip=`curl -k -u admin:$DOCKERHUB_PASS https://10.1.1.7/mgmt/tm/ltm/virtual/~production~juiceshopprod~$vs_name |jq .destination |cut -d'%' -f 1 |cut -d'/' -f 3 |cut -d':' -f 1`
+  echo VS IP $vs_ip
+  export DAST_WEBSITE=http://$vs_ip/
+  /analyze -t $DAST_WEBSITE
+}
+
+build() {
+  echo "Saving USER and ROOM variables as Project-level VARs"
+  curl -sH "PRIVATE-TOKEN:adFPwCh5ff6Jqy986YXQ" -X POST "http://10.1.1.6/api/v4/projects/10/variables" --form "key=USER" --form "value=$user"
+  curl -sH "PRIVATE-TOKEN:adFPwCh5ff6Jqy986YXQ" -X POST "http://10.1.1.6/api/v4/projects/10/variables" --form "key=ROOM" --form "value=$room"
+}
+
+revert_policy() {
+        echo 10.1.1.6 gitlab.lab >> /etc/hosts
+        git config --global user.email "isclab@f5.com"
+        git config --global user.name "isclab"
+        git config --global http.sslVerify false
+        git clone http://isclab:${DOCKERHUB_PASS}@gitlab.lab/isclab/simple_app.git
+        cd simple_app
+        git checkout dev_branch
+        jq 'del(.modifications[])' suggestions/new_waf_policy.json > waf_policy.json
+        rm -rf suggestions/new_waf_policy.json
+        git add *
+        git commit -a -m "reverting to original WAF policy"
+        git push -f origin dev_branch
+}

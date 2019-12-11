@@ -1,0 +1,27 @@
+mat-card {
+  height: auto;
+  min-width: 400px;
+  width: 30%;
+}
+
+mat-form-field {
+  padding-top: 10px;
+  width: 100%;
+}
+
+.form-container {
+  min-width: 350px;
+}
+
+#submitButton {
+  margin-left: 20%;
+  margin-top: 30px;
+  width: 60%;
+}
+
+.heading {
+  background: rgba(0, 0, 0, .2);
+  font-size: x-large;
+  justify-content: center;
+  padding: 12px 20px;
+}

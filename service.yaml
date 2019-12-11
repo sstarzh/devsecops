@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: juiceshop
+  namespace: staging
+  labels:
+    app: juiceshop
+    cis.f5.com/as3-tenant: staging
+    cis.f5.com/as3-app: juiceshop
+    cis.f5.com/as3-pool: kube_pool
+spec:
+  ports:
+  - name: juiceshop
+    port: 8080
+    protocol: TCP
+    targetPort: 3000
+  type: NodePort
+  selector:
+    app: juiceshop

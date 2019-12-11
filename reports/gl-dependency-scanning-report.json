@@ -1,0 +1,623 @@
+{
+  "version": "2.1",
+  "vulnerabilities": [
+    {
+      "category": "dependency_scanning",
+      "name": "XSS Vulnerability on closeText option",
+      "message": "XSS Vulnerability on closeText option in jquery-ui-dialog",
+      "cve": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/jquery-ui-1.8.10.custom.min.js:jquery-ui-dialog:cve:CVE-2016-7103",
+      "severity": "High",
+      "scanner": {
+        "id": "retire.js",
+        "name": "Retire.js"
+      },
+      "location": {
+        "file": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/jquery-ui-1.8.10.custom.min.js",
+        "dependency": {
+          "package": {
+            "name": "jquery-ui-dialog"
+          },
+          "version": "1.8.10"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2016-7103",
+          "value": "CVE-2016-7103",
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-7103"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://github.com/jquery/api.jqueryui.com/issues/281"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2016-7103"
+        },
+        {
+          "url": "https://snyk.io/vuln/npm:jquery-ui:20160721"
+        }
+      ]
+    },
+    {
+      "category": "dependency_scanning",
+      "name": "Out-of-bounds Read",
+      "message": "Out-of-bounds Read in base64url",
+      "cve": "juice-shop/package.json:base64url:hackerone:321687",
+      "severity": "High",
+      "scanner": {
+        "id": "retire.js",
+        "name": "Retire.js"
+      },
+      "location": {
+        "file": "juice-shop/package.json",
+        "dependency": {
+          "package": {
+            "name": "base64url"
+          },
+          "version": "0.0.6"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "hackerone",
+          "name": "HACKERONE-321687",
+          "value": "321687",
+          "url": "https://hackerone.com/reports/321687"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://hackerone.com/reports/321687"
+        }
+      ]
+    },
+    {
+      "category": "dependency_scanning",
+      "name": "jsonwebtoken_verification-bypass",
+      "message": "jsonwebtoken_verification-bypass in jsonwebtoken",
+      "cve": "juice-shop/package.json:jsonwebtoken:npm:17",
+      "severity": "High",
+      "scanner": {
+        "id": "retire.js",
+        "name": "Retire.js"
+      },
+      "location": {
+        "file": "juice-shop/package.json",
+        "dependency": {
+          "package": {
+            "name": "jsonwebtoken"
+          },
+          "version": "0.1.0"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "npm",
+          "name": "NPM-17",
+          "value": "17",
+          "url": "https://www.npmjs.com/advisories/17"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://nodesecurity.io/advisories/17"
+        }
+      ]
+    },
+    {
+      "category": "dependency_scanning",
+      "message": "Vulnerability in jws",
+      "cve": "juice-shop/package.json:jws:npm:88",
+      "severity": "High",
+      "scanner": {
+        "id": "retire.js",
+        "name": "Retire.js"
+      },
+      "location": {
+        "file": "juice-shop/package.json",
+        "dependency": {
+          "package": {
+            "name": "jws"
+          },
+          "version": "0.2.6"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "npm",
+          "name": "NPM-88",
+          "value": "88",
+          "url": "https://www.npmjs.com/advisories/88"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://nodesecurity.io/advisories/88"
+        }
+      ]
+    },
+    {
+      "category": "dependency_scanning",
+      "name": "XSS with location.hash",
+      "message": "XSS with location.hash in jquery",
+      "cve": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/jquery-1.3.2.js:jquery:cve:CVE-2011-4969",
+      "severity": "Medium",
+      "scanner": {
+        "id": "retire.js",
+        "name": "Retire.js"
+      },
+      "location": {
+        "file": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/jquery-1.3.2.js",
+        "dependency": {
+          "package": {
+            "name": "jquery"
+          },
+          "version": "1.3.2"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2011-4969",
+          "value": "CVE-2011-4969",
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-4969"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2011-4969"
+        },
+        {
+          "url": "http://research.insecurelabs.org/jquery/test/"
+        },
+        {
+          "url": "https://bugs.jquery.com/ticket/9521"
+        }
+      ]
+    },
+    {
+      "category": "dependency_scanning",
+      "name": "Selector interpreted as HTML",
+      "message": "Selector interpreted as HTML in jquery",
+      "cve": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/jquery-1.3.2.js:jquery:cve:CVE-2012-6708",
+      "severity": "Medium",
+      "scanner": {
+        "id": "retire.js",
+        "name": "Retire.js"
+      },
+      "location": {
+        "file": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/jquery-1.3.2.js",
+        "dependency": {
+          "package": {
+            "name": "jquery"
+          },
+          "version": "1.3.2"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2012-6708",
+          "value": "CVE-2012-6708",
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-6708"
+        }
+      ],
+      "links": [
+        {
+          "url": "http://bugs.jquery.com/ticket/11290"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2012-6708"
+        },
+        {
+          "url": "http://research.insecurelabs.org/jquery/test/"
+        }
+      ]
+    },
+    {
+      "category": "dependency_scanning",
+      "name": "XSS with location.hash",
+      "message": "XSS with location.hash in jquery",
+      "cve": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/jquery-1.4.4.min.js:jquery:cve:CVE-2011-4969",
+      "severity": "Medium",
+      "scanner": {
+        "id": "retire.js",
+        "name": "Retire.js"
+      },
+      "location": {
+        "file": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/jquery-1.4.4.min.js",
+        "dependency": {
+          "package": {
+            "name": "jquery"
+          },
+          "version": "1.4.4.min"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2011-4969",
+          "value": "CVE-2011-4969",
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-4969"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2011-4969"
+        },
+        {
+          "url": "http://research.insecurelabs.org/jquery/test/"
+        },
+        {
+          "url": "https://bugs.jquery.com/ticket/9521"
+        }
+      ]
+    },
+    {
+      "category": "dependency_scanning",
+      "name": "Selector interpreted as HTML",
+      "message": "Selector interpreted as HTML in jquery",
+      "cve": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/jquery-1.4.4.min.js:jquery:cve:CVE-2012-6708",
+      "severity": "Medium",
+      "scanner": {
+        "id": "retire.js",
+        "name": "Retire.js"
+      },
+      "location": {
+        "file": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/jquery-1.4.4.min.js",
+        "dependency": {
+          "package": {
+            "name": "jquery"
+          },
+          "version": "1.4.4.min"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2012-6708",
+          "value": "CVE-2012-6708",
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-6708"
+        }
+      ],
+      "links": [
+        {
+          "url": "http://bugs.jquery.com/ticket/11290"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2012-6708"
+        },
+        {
+          "url": "http://research.insecurelabs.org/jquery/test/"
+        }
+      ]
+    },
+    {
+      "category": "dependency_scanning",
+      "name": "3rd party CORS request may execute",
+      "message": "3rd party CORS request may execute in jquery",
+      "cve": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/jquery-1.4.4.min.js:jquery:cve:CVE-2015-9251",
+      "severity": "Medium",
+      "scanner": {
+        "id": "retire.js",
+        "name": "Retire.js"
+      },
+      "location": {
+        "file": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/jquery-1.4.4.min.js",
+        "dependency": {
+          "package": {
+            "name": "jquery"
+          },
+          "version": "1.4.4.min"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2015-9251",
+          "value": "CVE-2015-9251",
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-9251"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://github.com/jquery/jquery/issues/2432"
+        },
+        {
+          "url": "http://blog.jquery.com/2016/01/08/jquery-2-2-and-1-12-released/"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2015-9251"
+        },
+        {
+          "url": "http://research.insecurelabs.org/jquery/test/"
+        }
+      ]
+    },
+    {
+      "category": "dependency_scanning",
+      "name": "Title cross-site scripting vulnerability",
+      "message": "Title cross-site scripting vulnerability in jquery-ui-dialog",
+      "cve": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/jquery-ui-1.8.10.custom.min.js:jquery-ui-dialog:cve:CVE-2010-5312",
+      "severity": "Medium",
+      "scanner": {
+        "id": "retire.js",
+        "name": "Retire.js"
+      },
+      "location": {
+        "file": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/jquery-ui-1.8.10.custom.min.js",
+        "dependency": {
+          "package": {
+            "name": "jquery-ui-dialog"
+          },
+          "version": "1.8.10"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2010-5312",
+          "value": "CVE-2010-5312",
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-5312"
+        }
+      ],
+      "links": [
+        {
+          "url": "http://bugs.jqueryui.com/ticket/6016"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2010-5312"
+        }
+      ]
+    },
+    {
+      "category": "dependency_scanning",
+      "name": "FIXED so script elements gets removed by default to prevent possible XSS issues in default config implementations",
+      "message": "FIXED so script elements gets removed by default to prevent possible XSS issues in default config implementations in tinyMCE",
+      "cve": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/tinymce.min.js:tinyMCE:retire.js:97a2baf37975d3f762e2dde249358736",
+      "severity": "Medium",
+      "scanner": {
+        "id": "retire.js",
+        "name": "Retire.js"
+      },
+      "location": {
+        "file": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/tinymce.min.js",
+        "dependency": {
+          "package": {
+            "name": "tinyMCE"
+          },
+          "version": "4.0.26"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "retire.js",
+          "name": "RETIRE-JS-97a2baf37975d3f762e2dde249358736",
+          "value": "97a2baf37975d3f762e2dde249358736",
+          "url": "https://www.tinymce.com/docs/changelog/"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://www.tinymce.com/docs/changelog/"
+        }
+      ]
+    },
+    {
+      "category": "dependency_scanning",
+      "name": "Regex denial of service",
+      "message": "Regex denial of service in moment",
+      "cve": "juice-shop/package.json:moment:npm:55",
+      "severity": "Medium",
+      "scanner": {
+        "id": "retire.js",
+        "name": "Retire.js"
+      },
+      "location": {
+        "file": "juice-shop/package.json",
+        "dependency": {
+          "package": {
+            "name": "moment"
+          },
+          "version": "2.0.0"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "npm",
+          "name": "NPM-55",
+          "value": "55",
+          "url": "https://www.npmjs.com/advisories/55"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://nodesecurity.io/advisories/55"
+        }
+      ]
+    },
+    {
+      "category": "dependency_scanning",
+      "name": "Sanitization not applied recursively",
+      "message": "Sanitization not applied recursively in sanitize-html",
+      "cve": "juice-shop/package.json:sanitize-html:retire.js:2f1fb7690f90cc9665c2887303f58f74",
+      "severity": "Medium",
+      "scanner": {
+        "id": "retire.js",
+        "name": "Retire.js"
+      },
+      "location": {
+        "file": "juice-shop/package.json",
+        "dependency": {
+          "package": {
+            "name": "sanitize-html"
+          },
+          "version": "1.4.2"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "retire.js",
+          "name": "RETIRE-JS-2f1fb7690f90cc9665c2887303f58f74",
+          "value": "2f1fb7690f90cc9665c2887303f58f74",
+          "url": "https://github.com/punkave/sanitize-html/issues/29"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://github.com/punkave/sanitize-html/issues/29"
+        },
+        {
+          "url": "https://nodesecurity.io/advisories/135"
+        }
+      ]
+    },
+    {
+      "category": "dependency_scanning",
+      "name": "jQuery before 3.4.0, as used in Drupal, Backdrop CMS, and other products, mishandles jQuery.extend(true, {}, ...) because of Object.prototype pollution",
+      "message": "jQuery before 3.4.0, as used in Drupal, Backdrop CMS, and other products, mishandles jQuery.extend(true, {}, ...) because of Object.prototype pollution in jquery",
+      "cve": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/jquery-1.3.2.js:jquery:cve:CVE-2019-11358",
+      "severity": "Low",
+      "scanner": {
+        "id": "retire.js",
+        "name": "Retire.js"
+      },
+      "location": {
+        "file": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/jquery-1.3.2.js",
+        "dependency": {
+          "package": {
+            "name": "jquery"
+          },
+          "version": "1.3.2"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2019-11358",
+          "value": "CVE-2019-11358",
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-11358"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://blog.jquery.com/2019/04/10/jquery-3-4-0-released/"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2019-11358"
+        },
+        {
+          "url": "https://github.com/jquery/jquery/commit/753d591aea698e57d6db58c9f722cd0808619b1b"
+        }
+      ]
+    },
+    {
+      "category": "dependency_scanning",
+      "name": "jQuery before 3.4.0, as used in Drupal, Backdrop CMS, and other products, mishandles jQuery.extend(true, {}, ...) because of Object.prototype pollution",
+      "message": "jQuery before 3.4.0, as used in Drupal, Backdrop CMS, and other products, mishandles jQuery.extend(true, {}, ...) because of Object.prototype pollution in jquery",
+      "cve": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/jquery-1.4.4.min.js:jquery:cve:CVE-2019-11358",
+      "severity": "Low",
+      "scanner": {
+        "id": "retire.js",
+        "name": "Retire.js"
+      },
+      "location": {
+        "file": "juice-shop/juice-shop/node_modules/selenium-webdriver/lib/test/data/js/jquery-1.4.4.min.js",
+        "dependency": {
+          "package": {
+            "name": "jquery"
+          },
+          "version": "1.4.4.min"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "cve",
+          "name": "CVE-2019-11358",
+          "value": "CVE-2019-11358",
+          "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-11358"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://blog.jquery.com/2019/04/10/jquery-3-4-0-released/"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2019-11358"
+        },
+        {
+          "url": "https://github.com/jquery/jquery/commit/753d591aea698e57d6db58c9f722cd0808619b1b"
+        }
+      ]
+    },
+    {
+      "category": "dependency_scanning",
+      "name": "Prototype pollution attack",
+      "message": "Prototype pollution attack in lodash",
+      "cve": "juice-shop/package.json:lodash:hackerone:310443",
+      "severity": "Low",
+      "scanner": {
+        "id": "retire.js",
+        "name": "Retire.js"
+      },
+      "location": {
+        "file": "juice-shop/package.json",
+        "dependency": {
+          "package": {
+            "name": "lodash"
+          },
+          "version": "2.4.2"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "hackerone",
+          "name": "HACKERONE-310443",
+          "value": "310443",
+          "url": "https://hackerone.com/reports/310443"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://hackerone.com/reports/310443"
+        }
+      ]
+    },
+    {
+      "category": "dependency_scanning",
+      "name": "Prototype pollution attack",
+      "message": "Prototype pollution attack in lodash",
+      "cve": "juice-shop/package.json:lodash:hackerone:380873",
+      "severity": "Low",
+      "scanner": {
+        "id": "retire.js",
+        "name": "Retire.js"
+      },
+      "location": {
+        "file": "juice-shop/package.json",
+        "dependency": {
+          "package": {
+            "name": "lodash"
+          },
+          "version": "2.4.2"
+        }
+      },
+      "identifiers": [
+        {
+          "type": "hackerone",
+          "name": "HACKERONE-380873",
+          "value": "380873",
+          "url": "https://hackerone.com/reports/380873"
+        }
+      ],
+      "links": [
+        {
+          "url": "https://hackerone.com/reports/380873"
+        }
+      ]
+    }
+  ],
+  "remediations": []
+}
