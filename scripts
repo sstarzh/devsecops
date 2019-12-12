@@ -27,26 +27,26 @@ check_suggestions() {
     if [ -f /tmp/suggest_mod ];
     then
         sleep 10
-        polid=$(curl -X POST --user admin:${DOCKERHUB_PASS} --insecure https://10.1.1.7/mgmt/tm/asm/tasks/export-suggestions -d '{ "policyReference": { "link": "https://localhost/mgmt/tm/asm/policies/orTNBtBqVsAAGRAn-0xl_g" }, "inline": true }' | jq -r '.id')
+        polid=$(curl -X POST --user admin:${DOCKERHUB_PASS} --insecure https://${BIG_IP}/mgmt/tm/asm/tasks/export-suggestions -d '{ "policyReference": { "link": "https://localhost/mgmt/tm/asm/policies/orTNBtBqVsAAGRAn-0xl_g" }, "inline": true }' | jq -r '.id')
         echo $polid
         sleep 10
-        suggestion=$(curl -k --user admin:${DOCKERHUB_PASS} https://10.1.1.7/mgmt/tm/asm/tasks/export-suggestions/$polid | jq -r '.result.suggestions')
+        suggestion=$(curl -k --user admin:${DOCKERHUB_PASS} https://${BIG_IP}/mgmt/tm/asm/tasks/export-suggestions/$polid | jq -r '.result.suggestions')
         modification=$(echo $suggestion | sed 's/^.//' | sed 's/.$//')
         echo $modification
-        echo 10.1.1.6 gitlab.lab >> /etc/hosts
-        git config --global user.email "isclab@f5.com"
-        git config --global user.name "isclab"
+        echo ${GITLAB_IP} gitlab.lab >> /etc/hosts
+        git config --global user.email "${GITLAB_USER}@f5.com"
+        git config --global user.name "${GITLAB_USER}"
         git config --global http.sslVerify false
-        git clone http://isclab:${DOCKERHUB_PASS}@gitlab.lab/isclab/simple_app.git
-        cd simple_app
-        git checkout dev_branch
+        git clone http://${GITLAB_USER}:${DOCKERHUB_PASS}@gitlab.lab/${GITLAB_USER}/${REPO_NAME}.git
+        cd ${REPO_NAME}
+        git checkout ${DEV_BRANCH}
         cp waf_policy.json suggestions/new_waf_policy.json
         new_policy=$(awk -v "a=$modification" '/modifications/{print; print a;next}1' waf_policy.json)
         echo $new_policy > /tmp/new_waf_policy.json
         jq . /tmp/new_waf_policy.json > suggestions/new_waf_policy.json
         git add suggestions/*
         git commit -a -m "add suggestions to the waf policy"
-        git push -f origin dev_branch
+        git push -f origin ${DEV_BRANCH}
         echo "Trusted traffic failed. Check /suggestions in Git repo"
         return 1
     else
@@ -60,7 +60,7 @@ function upload_file_to_bigip() {
     export size_minus=`expr $size - 1`
     export range="0-${size_minus}/${size}"
     echo $range
-    curl -vv -i -X POST -H "Content-Range: $range" --data-binary "@$1" --user admin:${DOCKERHUB_PASS} --insecure  https://10.1.1.7/mgmt/tm/asm/file-transfer/uploads/policy.json
+    curl -vv -i -X POST -H "Content-Range: $range" --data-binary "@$1" --user admin:${DOCKERHUB_PASS} --insecure  https://${BIG_IP}/mgmt/tm/asm/file-transfer/uploads/policy.json
 }
 
 waf_to_staging() {
@@ -91,9 +91,9 @@ waf_to_staging() {
     echo "Upload Policy to BIG-IP"
     upload_file_to_bigip waf_policy.json
     echo "Import Policy to BIG-IP"
-    curl -k -X POST https://10.1.1.7/mgmt/tm/asm/tasks/import-policy/ --user admin:${DOCKERHUB_PASS} -d'{"filename":"policy.json","policy":{"fullPath":"/Common/AppPolicy01"}}'
+    curl -k -X POST https://${BIG_IP}/mgmt/tm/asm/tasks/import-policy/ --user admin:${DOCKERHUB_PASS} -d'{"filename":"policy.json","policy":{"fullPath":"/Common/AppPolicy01"}}'
     echo "Apply Policy"
-    curl -k -X POST https://10.1.1.7/mgmt/tm/asm/tasks/apply-policy/ --user admin:${DOCKERHUB_PASS} -d'{"policy":{"fullPath":"/Common/AppPolicy01"}}'
+    curl -k -X POST https://${BIG_IP}/mgmt/tm/asm/tasks/apply-policy/ --user admin:${DOCKERHUB_PASS} -d'{"policy":{"fullPath":"/Common/AppPolicy01"}}'
 }
 
 waf_to_prod() {
@@ -124,9 +124,9 @@ waf_to_prod() {
     echo "Upload Policy to BIG-IP"
     upload_file_to_bigip waf_policy.json
     echo "Import Policy to BIG-IP"
-    curl -k -X POST https://10.1.1.7/mgmt/tm/asm/tasks/import-policy/ --user admin:${DOCKERHUB_PASS} -d'{"filename":"policy.json","policy":{"fullPath":"/Common/AppPolicy01"}}'
+    curl -k -X POST https://${BIG_IP}/mgmt/tm/asm/tasks/import-policy/ --user admin:${DOCKERHUB_PASS} -d'{"filename":"policy.json","policy":{"fullPath":"/Common/AppPolicy01"}}'
     echo "Apply Policy"
-    curl -k -X POST https://10.1.1.7/mgmt/tm/asm/tasks/apply-policy/ --user admin:${DOCKERHUB_PASS} -d'{"policy":{"fullPath":"/Common/AppPolicy01"}}'
+    curl -k -X POST https://${BIG_IP}/mgmt/tm/asm/tasks/apply-policy/ --user admin:${DOCKERHUB_PASS} -d'{"policy":{"fullPath":"/Common/AppPolicy01"}}'
     echo "Attach Policy to PROD Virtual Server"
     sed -i "s/staging/production/g" ConfigMapWaf.yaml
     sed -i "s/10.1.10.101/10.1.10.102/g" ConfigMapWaf.yaml
@@ -138,7 +138,7 @@ waf_to_prod() {
 trusted_traffic() {
     vs_name=serviceMain
     echo VS Name $vs_name
-    vs_ip=`curl -k -u admin:$DOCKERHUB_PASS https://10.1.1.7/mgmt/tm/ltm/virtual/~staging~juiceshop~$vs_name |jq .destination |cut -d'%' -f 1 |cut -d'/' -f 3 |cut -d':' -f 1`
+    vs_ip=`curl -k -u admin:$DOCKERHUB_PASS https://${BIG_IP}/mgmt/tm/ltm/virtual/~staging~juiceshop~$vs_name |jq .destination |cut -d'%' -f 1 |cut -d'/' -f 3 |cut -d':' -f 1`
     echo VS IP $vs_ip
     sleep 5
     curl -o /tmp/resp.json -k "http://$vs_ip/ftp/Packages.json"
@@ -149,7 +149,7 @@ trusted_traffic() {
 vulnerability_scan() {
     vs_name=serviceMain
     echo VS Name $vs_name
-    vs_ip=`curl -k -u admin:$DOCKERHUB_PASS https://10.1.1.7/mgmt/tm/ltm/virtual/~staging~juiceshop~$vs_name |jq .destination |cut -d'%' -f 1 |cut -d'/' -f 3 |cut -d':' -f 1`
+    vs_ip=`curl -k -u admin:$DOCKERHUB_PASS https://${BIG_IP}/mgmt/tm/ltm/virtual/~staging~juiceshop~$vs_name |jq .destination |cut -d'%' -f 1 |cut -d'/' -f 3 |cut -d':' -f 1`
     echo VS IP $vs_ip
     sleep 5
     curl -o /tmp/resp.xss -k "http://$vs_ip/api/Products/1" -H "Content-Type:application/json" --data-binary '{"description":"<script>alert(\"XSS3\")</script>"}'
@@ -201,7 +201,7 @@ cleanup_staging() {
 function dast() {
   vs_name=serviceMain
   echo VS Name $vs_name
-  vs_ip=`curl -k -u admin:$DOCKERHUB_PASS https://10.1.1.7/mgmt/tm/ltm/virtual/~production~juiceshopprod~$vs_name |jq .destination |cut -d'%' -f 1 |cut -d'/' -f 3 |cut -d':' -f 1`
+  vs_ip=`curl -k -u admin:$DOCKERHUB_PASS https://${BIG_IP}/mgmt/tm/ltm/virtual/~production~juiceshopprod~$vs_name |jq .destination |cut -d'%' -f 1 |cut -d'/' -f 3 |cut -d':' -f 1`
   echo VS IP $vs_ip
   export DAST_WEBSITE=http://$vs_ip/
   /analyze -t $DAST_WEBSITE
@@ -209,21 +209,21 @@ function dast() {
 
 build() {
   echo "Saving USER and ROOM variables as Project-level VARs"
-  curl -sH "PRIVATE-TOKEN:adFPwCh5ff6Jqy986YXQ" -X POST "http://10.1.1.6/api/v4/projects/10/variables" --form "key=USER" --form "value=$user"
-  curl -sH "PRIVATE-TOKEN:adFPwCh5ff6Jqy986YXQ" -X POST "http://10.1.1.6/api/v4/projects/10/variables" --form "key=ROOM" --form "value=$room"
+  curl -sH "PRIVATE-TOKEN:VQoKxxd-HFxyXcuFBKnf" -X POST "http://${GITLAB_IP}/api/v4/projects/10/variables" --form "key=USER" --form "value=$user"
+  curl -sH "PRIVATE-TOKEN:VQoKxxd-HFxyXcuFBKnf" -X POST "http://${GITLAB_IP}/api/v4/projects/10/variables" --form "key=ROOM" --form "value=$room"
 }
 
 revert_policy() {
-        echo 10.1.1.6 gitlab.lab >> /etc/hosts
-        git config --global user.email "isclab@f5.com"
-        git config --global user.name "isclab"
+        echo ${GITLAB_IP} gitlab.lab >> /etc/hosts
+        git config --global user.email "${GITLAB_USER}@f5.com"
+        git config --global user.name "${GITLAB_USER}"
         git config --global http.sslVerify false
-        git clone http://isclab:${DOCKERHUB_PASS}@gitlab.lab/isclab/simple_app.git
-        cd simple_app
-        git checkout dev_branch
+        git clone http://${GITLAB_USER}:${DOCKERHUB_PASS}@gitlab.lab/${GITLAB_USER}/${REPO_NAME}.git
+        cd ${REPO_NAME}
+        git checkout ${DEV_BRANCH}
         jq 'del(.modifications[])' suggestions/new_waf_policy.json > waf_policy.json
         rm -rf suggestions/new_waf_policy.json
         git add *
         git commit -a -m "reverting to original WAF policy"
-        git push -f origin dev_branch
+        git push -f origin ${DEV_BRANCH}
 }
