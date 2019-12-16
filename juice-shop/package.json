@@ -122,7 +122,7 @@
     "pug": "^2.0.4",
     "replace": "^1.1.1",
     "request": "^2.88.0",
-    "sanitize-html": "1.4.2",
+    "sanitize-html": "1.20.1",
     "semver": "^6.3.0",
     "sequelize": "^5.16.0",
     "sequelize-noupdate-attributes": "^1.0.0",
