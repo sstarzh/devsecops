@@ -1,0 +1,203 @@
+stages:
+  - SAST
+  - build
+  - staging
+  - production
+  - deploy_security_policy
+  - functionality_tests
+  - vulnerability_tests
+  - DAST
+  - cleanup
+
+variables:
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  DOCKER_TLS_CERTDIR: ''
+  DOCKER_HOST: tcp://localhost:2375
+  DOCKER_DRIVER: overlay2
+  DS_DEFAULT_ANALYZERS: "bundler-audit,gemnasium"
+
+services:
+  - docker:dind
+
+SAST:
+  stage: SAST
+  image: docker:18-git
+  tags:
+   - cluster
+  allow_failure: true
+  script:
+    - cat reports/SAST.out
+  only:
+    - master
+  artifacts:
+    paths:
+    - reports/gl-sast-report.json
+
+Dependency Scanning:
+  stage: SAST
+  image: docker:18-git
+  tags:
+   - cluster
+  allow_failure: true
+  script:
+    - cat reports/DepScanning.out
+  only:
+    - master
+  artifacts:
+    paths:
+    - reports/gl-dependency-scanning-report.json
+
+Build:
+  stage: build
+  image: node:alpine
+  tags:
+    - cluster
+  script:
+    - apk update && apk add docker
+    - cd juice-shop/
+    - mkdir -p $HOME/.docker
+    - docker login -u isclab -p ${DOCKERHUB_PASS}
+    - docker build -t ${REPOSITORY_URL}/juice-shop:${TAG} .
+    - docker push ${REPOSITORY_URL}/juice-shop:${TAG}
+  only:
+    variables:
+      - $REPOSITORY_URL == "isclab"
+Build:
+  stage: build
+  image: node:alpine
+  tags:
+    - cluster
+  script:
+    - apk update && apk upgrade && apk add --no-cache curl jq
+    - source scripts
+    - build
+    - echo "Building the app..."
+    - dir=`ls -l juice-shop/`
+    - echo $dir
+  only:
+    - master
+
+Deploy WAF Policy to Staging:
+  stage: deploy_security_policy
+  image: lachlanevenson/k8s-kubectl:latest
+  tags:
+    - cluster
+  script:
+    - apk update && apk upgrade && apk add --no-cache curl jq git
+    - echo "Loading Security Policy"
+    - source scripts
+    - waf_to_staging
+    - echo "Attaching Policy to Staging Virtual Server"
+    - kubectl apply -f ConfigMapWaf.yaml
+  only:
+    - master
+
+Deploy WAF Policy to Production:
+  stage: deploy_security_policy
+  image: lachlanevenson/k8s-kubectl:latest
+  tags:
+    - cluster
+  script:
+    - apk update && apk upgrade && apk add --no-cache curl jq git
+    - echo "Loading Security Policy"
+    - source scripts
+    - waf_to_prod
+    - echo "Attach Policy to PROD Virtual Server"
+    - kubectl apply -f ConfigMapWaf.yaml
+  only:
+    - tags
+
+Trusted Traffic:
+    stage: functionality_tests
+    image: docker:git
+    tags:
+        - cluster
+    script:
+        - apk add --no-cache curl jq gawk && apk upgrade
+        - source scripts
+        - trusted_traffic
+        - check_pass json
+        - check_pass yml
+        - check_pass bak
+        - check_suggestions
+    only:
+      - master
+
+Vulnerability Scan:
+  stage: vulnerability_tests
+  image: docker:git
+  tags:
+      - cluster
+  script:
+      - apk add --no-cache curl jq gawk && apk upgrade
+      - source scripts
+      - vulnerability_scan
+      - check_blocked xss
+      - check_blocked ftp
+      - check_blocked login
+      - check_blocked pw
+  only:
+      - master
+
+Deploy to Staging:
+  image: lachlanevenson/k8s-kubectl:latest
+  tags:
+    - cluster
+  stage: staging
+  environment:
+    name: staging/$CI_BUILD_REF_NAME
+    url: https://$CI_BUILD_REF_SLUG-staging.isclab.f5.com
+  only:
+    - master
+  script:
+    - apk update && apk upgrade && apk add --no-cache curl jq git
+    - source scripts
+    - echo "Deploying to staging ENV"
+    - deploy_staging
+
+Deploy to Production:
+  image: lachlanevenson/k8s-kubectl:latest
+  tags:
+    - cluster
+  stage: production
+  environment:
+    name: production/$CI_BUILD_REF_NAME
+    url: https://$CI_BUILD_REF_SLUG.isclab.f5.com
+  only:
+    - tags
+  script:
+    - apk update && apk upgrade && apk add --no-cache curl jq git
+    - source scripts
+    - echo "Deploying to production ENV"
+    - deploy_prod
+
+DAST:
+  stage: DAST
+  image: docker:18-git
+  tags:
+   - cluster
+  allow_failure: true
+  script:
+    - cat reports/DAST.out
+  only:
+    - tags
+  artifacts:
+    paths:
+    - reports/gl-dast-report.json
+
+
+Delete Staging Resources:
+    stage: cleanup
+    image: lachlanevenson/k8s-kubectl:latest
+    tags:
+        - cluster
+    script:
+        - apk add --no-cache curl jq gawk git && apk upgrade
+        - source scripts
+        - cleanup_staging
+        - revert_policy
+    when: manual
+    allow_failure: true
+    only:
+      - tags
+

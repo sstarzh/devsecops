@@ -209,8 +209,8 @@ function dast() {
 
 build() {
   echo "Saving USER and ROOM variables as Project-level VARs"
-  curl -sH "PRIVATE-TOKEN:VQoKxxd-HFxyXcuFBKnf" -X POST "http://${GITLAB_IP}/api/v4/projects/10/variables" --form "key=USER" --form "value=$user"
-  curl -sH "PRIVATE-TOKEN:VQoKxxd-HFxyXcuFBKnf" -X POST "http://${GITLAB_IP}/api/v4/projects/10/variables" --form "key=ROOM" --form "value=$room"
+  curl -sH "PRIVATE-TOKEN:${GITLAB_TOKEN}" -X POST "http://${GITLAB_IP}/api/v4/projects/10/variables" --form "key=USER" --form "value=$user"
+  curl -sH "PRIVATE-TOKEN:${GITLAB_TOKEN}" -X POST "http://${GITLAB_IP}/api/v4/projects/10/variables" --form "key=ROOM" --form "value=$room"
 }
 
 revert_policy() {
