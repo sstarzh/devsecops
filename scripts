@@ -66,6 +66,11 @@ function upload_file_to_bigip() {
 waf_to_staging() {
     sed -i "s/<BRANCH>/${CI_COMMIT_REF_NAME}/g" waf_policy.json
     sed -i "s/<USER>/${USER}/g" waf_policy.json
+    if [ -n ${WEBHOOK}]
+    then
+    sed -i "s#<connector>#${WEBHOOK}#g" waf_policy.json
+    elif [ -n ${ROOM}]
+    then
     connector0="https://outlook.office.com/webhook/20ce5bf4-7b14-4080-9f84-15692f0d6448@dd3dfd2f-6a3b-40d1-9be0-bf8327d81c50/IncomingWebhook/a7495f95d44045938e206f9423b3a798/223089a9-ccde-4d35-8a48-415503fe00dc"
     connector1="https://outlook.office.com/webhook/eb5dc0c8-04d9-4624-b831-bf4ffa66025f@dd3dfd2f-6a3b-40d1-9be0-bf8327d81c50/IncomingWebhook/216eb090924d462f8fba39650c3cd1a3/223089a9-ccde-4d35-8a48-415503fe00dc"
     connector2="https://outlook.office.com/webhook/eb5dc0c8-04d9-4624-b831-bf4ffa66025f@dd3dfd2f-6a3b-40d1-9be0-bf8327d81c50/IncomingWebhook/b355a59d52724a6082997e610a4e4c8a/223089a9-ccde-4d35-8a48-415503fe00dc"
@@ -88,6 +93,9 @@ waf_to_staging() {
       sed -i "s#<connector>#${connector0}#g" waf_policy.json
       ;;
     esac
+    else
+    echo "No Webhooks provided"
+    fi
     echo "Upload Policy to BIG-IP"
     upload_file_to_bigip waf_policy.json
     echo "Import Policy to BIG-IP"
@@ -99,6 +107,11 @@ waf_to_staging() {
 waf_to_prod() {
     sed -i "s/<BRANCH>/${CI_COMMIT_REF_NAME}/g" waf_policy.json
     sed -i "s/<USER>/${USER}/g" waf_policy.json
+    if [ -n ${WEBHOOK}]
+    then
+    sed -i "s#<connector>#${WEBHOOK}#g" waf_policy.json
+    elif [ -n ${ROOM}]
+    then
     connector0="https://outlook.office.com/webhook/20ce5bf4-7b14-4080-9f84-15692f0d6448@dd3dfd2f-6a3b-40d1-9be0-bf8327d81c50/IncomingWebhook/a7495f95d44045938e206f9423b3a798/223089a9-ccde-4d35-8a48-415503fe00dc"
     connector1="https://outlook.office.com/webhook/eb5dc0c8-04d9-4624-b831-bf4ffa66025f@dd3dfd2f-6a3b-40d1-9be0-bf8327d81c50/IncomingWebhook/216eb090924d462f8fba39650c3cd1a3/223089a9-ccde-4d35-8a48-415503fe00dc"
     connector2="https://outlook.office.com/webhook/eb5dc0c8-04d9-4624-b831-bf4ffa66025f@dd3dfd2f-6a3b-40d1-9be0-bf8327d81c50/IncomingWebhook/b355a59d52724a6082997e610a4e4c8a/223089a9-ccde-4d35-8a48-415503fe00dc"
@@ -121,6 +134,9 @@ waf_to_prod() {
       sed -i "s#<connector>#${connector0}#g" waf_policy.json
       ;;
     esac
+    else
+    echo "No Webhooks provided"
+    fi
     echo "Upload Policy to BIG-IP"
     upload_file_to_bigip waf_policy.json
     echo "Import Policy to BIG-IP"
